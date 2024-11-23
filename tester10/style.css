@@ -18,7 +18,7 @@ h1 {
     color: #4CAF50;
 }
 
-form {
+.input-form, .catalog {
     margin-bottom: 20px;
 }
 
