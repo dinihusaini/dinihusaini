@@ -3,30 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Katalog Barang</title>
+    <title>Login Form with Catalog</title>
+    <link rel="stylesheet" href="./pertemuan10.css">
 </head>
 <body>
-    <div class="container">
-        <h1 id="title">Login</h1>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+    <div id="app"></div>
 
-        <div id="catalog" style="display: none;">
-            <h1>Katalog Barang</h1>
-            <form id="barangForm">
-                <input type="text" id="nama" placeholder="Nama Barang" required>
-                <input type="number" id="harga" placeholder="Harga" required>
-                <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
-                <input type="text" id="gambar" placeholder="URL Gambar" required>
-                <button type="submit">Tambah Barang</button>
-            </form>
-            <ul id="barangList"></ul>
-        </div>
-    </div>
-    <script src="script.js"></script>
+    <script>
+        const pbo = {
+            // Model for database
+            model: {
+                mahasiswa: [
+                    { username: 'dini', pin: 'dini2312' },
+                    { username: 'admin', pin: 'admin123' },
+                    { username: 'arya', pin: 'arya1809' },
+                ],
+                catalog: [
+                    { id: 1, name: 'Laptop', description: 'High performance laptop', price: '$1200', image: 'https://via.placeholder.com/150' },
+                    { id: 2, name: 'Smartphone', description: 'Latest model smartphone', price: '$800', image: 'https://via.placeholder.com/150' },
+                    { id: 3, name: 'Headphones', description: 'Noise-cancelling headphones', price: '$200', image: 'https://via.placeholder.com/150' }
+                ],
+                cart: []
+            },
+            
+            // View for the login form and catalog
+            view: {
+                signform: function () {
+                    return `
+                        <div class="input-form">
+                            Username: <input type='text' id='username'><br/>
+                            Pin: <input type='password' id='pin'><br/>
+                            <button id='login'>Login</button>
+                            <button id='cancel'>Cancel</button>
+                        </div>
+                    `;
+                },
+
+                catalogView: function () {
+                    const items = pbo.model.catalog.map(item => `
+                        <div class="catalog-item" data-id="${item.id}">
+                            <img src="${item.image}" alt="${item.name}">
+                            <h3>${item.name}</h3>
+                            <p>${item.description}</p>
+                            <p><strong>${item.price}</strong></p>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    `).join('');
+                    return `
+                        <div class="catalog">
+                            <h2>Catalog</h2>
+                            <div class="items">${items}</div>
+                        </div>
+                    `;
+                },
+
+                cartView: function () {
+                    const items = pbo.model.cart.map(item => `
+                        <div class="cart-item">
+                            <h3>${item.name}</h3>
+                            <p>${item.price}</p>
+                        </div>
+                    `).join('');
+                    return `
+                        <div class="cart">
+                            <h2>Your Cart</h2>
+                            <div class="items">${items}</div>
+                            <button id="checkout">Checkout</button>
+                        </div>
+                    `;
+                },
+            },
+
+            // Controller to manage logic for login, catalog, and cart
+            controller: {
+                init: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.signform();
+                    
+                    document.getElementById('login').addEventListener('click', this.signin);
+                    document.getElementById('cancel').addEventListener('click', this.signout);
+                },
+                
+                signin: function () {
+                    const username = document.getElementById('username').value;
+                    const pin = document.getElementById('pin').value;
+
+                    const userFound = pbo.model.mahasiswa.find(
+                        (user) => user.username === username && user.pin === pin
+                    );
+
+                    if (userFound) {
+                        alert('Login berhasil!');
+                        pbo.controller.showCatalog();
+                    } else {
+                        alert('Username atau Pin salah!');
+                    }
+                },
+                
+                signout: function () {
+                    document.getElementById('username').value = '';
+                    document.getElementById('pin').value = '';
+                },
+
+                showCatalog: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.catalogView();
+
+                    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+                    addToCartButtons.forEach(button => {
+                        button.addEventListener('click', this.addToCart);
+                    });
+                },
+
+                addToCart: function (e) {
+                    const itemId = e.target.closest('.catalog-item').getAttribute('data-id');
+                    const item = pbo.model.catalog.find(item => item.id == itemId);
+
+                    if (item) {
+                        pbo.model.cart.push(item);
+                        alert(`${item.name} added to your cart!`);
+                    }
+                },
+
+                showCart: function () {
+                    const app = document.getElementById('app');
+                    app.innerHTML = pbo.view.cartView();
+
+                    document.getElementById('checkout').addEventListener('click', this.checkout);
+                },
+
+                checkout: function () {
+                    alert('Proceeding to checkout...');
+                    // Here you can add logic for checkout
+                }
+            },
+        };
+
+        // Initialize the program
+        pbo.controller.init();
+    </script>
 </body>
 </html>
