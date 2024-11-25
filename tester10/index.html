@@ -11,7 +11,7 @@
 
     <script>
         const pbo = {
-            // Model for database
+            // Model untuk database
             model: {
                 mahasiswa: [
                     { username: 'dini', pin: 'dini2312' },
@@ -25,8 +25,8 @@
                 ],
                 cart: []
             },
-            
-            // View for the login form and catalog
+
+            // View untuk tampilan
             view: {
                 signform: function () {
                     return `
@@ -74,16 +74,16 @@
                 },
             },
 
-            // Controller to manage logic for login, catalog, and cart
+            // Controller untuk perlakuan terhadap view dan database
             controller: {
                 init: function () {
                     const app = document.getElementById('app');
                     app.innerHTML = pbo.view.signform();
-                    
+
                     document.getElementById('login').addEventListener('click', this.signin);
                     document.getElementById('cancel').addEventListener('click', this.signout);
                 },
-                
+
                 signin: function () {
                     const username = document.getElementById('username').value;
                     const pin = document.getElementById('pin').value;
@@ -94,12 +94,12 @@
 
                     if (userFound) {
                         alert('Login berhasil!');
-                        pbo.controller.showCatalog();
+                        pbo.controller.showCatalog(); // Show the catalog after successful login
                     } else {
                         alert('Username atau Pin salah!');
                     }
                 },
-                
+
                 signout: function () {
                     document.getElementById('username').value = '';
                     document.getElementById('pin').value = '';
@@ -139,7 +139,7 @@
             },
         };
 
-        // Initialize the program
+        // Inisialisasi programnya
         pbo.controller.init();
     </script>
 </body>
